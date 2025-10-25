@@ -1,5 +1,6 @@
-import pygame
+ import pygame
 from pygame.locals import *
+import time
 
 pygame.init()
 screen = pygame.display.set_mode((900,500))
@@ -12,20 +13,23 @@ red_spaceship = pygame.transform.scale(pygame.image.load("images/red ship.png"),
 red_spaceship = pygame.transform.rotate(red_spaceship,270)
 font = pygame.font.SysFont("Times New Roman" , 20)
 
-yellow = pygame.Rect(100,300,55,40)
-red = pygame.Rect(700,300,55,40)
+yellow = pygame.Rect(100,300,80,80)
+red = pygame.Rect(700,300,80,80)
 border = pygame.Rect(450,0,10,500)
 ylist = []
 rlist = []
 rlife = 10
 ylife = 10
+game_over = False
 
 def handle_bullets():
-    global ylist,yellow,red,rlist,rlife,ylife
+    global ylist,yellow,red,rlist,rlife,ylife,game_over
     for y in ylist:
+        print("scko")
         y.x += 10
         if y.colliderect(red):
             print("hellow")
+            print(rlife)
             rlife -= 1
             ylist.remove(y)
 
@@ -33,9 +37,9 @@ def handle_bullets():
     for r in rlist:
         r.x -= 10
         if r.colliderect(yellow):
+            print("khvoeuw")
             ylife -= 1
             rlist.remove(r)
-
     
 
 
@@ -74,21 +78,14 @@ while playing :
             if event.key == K_f:
                 rbullet = pygame.Rect(red.x-30,red.y+40,10,5)
                 rlist.append(rbullet)
-    
-    for y in ylist:
-        y.x += 10
-        if y.colliderect(red):
-            print("hellow")
-            rlife -= 1
-            ylist.remove(y)
 
+    if rlife <= 0:
+        game_over = True
 
-    for r in rlist:
-        r.x -= 10
-        if r.colliderect(yellow):
-            ylife -= 1
-            rlist.remove(r)        
+    if ylife <= 0:
+        game_over = True
 
+                
 
     screen.blit(b,(0,0))
     screen.blit(yellow_spaceship,(yellow.x,yellow.y))
@@ -105,6 +102,14 @@ while playing :
     for i in rlist:
         pygame.draw.rect(screen,"white",i)
 
+    if game_over == True :
+        text3 = font.render("GAME OVER !!!" , True,"white")
+        screen.blit(text3,(450,250))
+
+        pygame.display.update()
+
+        time.sleep(2)
+        pygame.quit()
     handle_bullets()
 
     pygame.display.update()
